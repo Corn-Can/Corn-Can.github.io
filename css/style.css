@@ -1,0 +1,170 @@
+:root{--bg:#0f1724;--card:#0b1220;--text:#e6eef8;--muted:#9fb8ff;}
+body{font-family:"Microsoft JhengHei",system-ui,Segoe UI,Arial;background:var(--bg);color:var(--text);margin:0;padding:0;height:100vh;display:flex;overflow:hidden;} 
+
+/* ===== Sidebar & Menu ===== */
+.sidebar{
+  width:230px;background:#0b1220;padding:8px 0;box-sizing:border-box;
+  margin-top: 60px; 
+  display:flex;flex-direction:column;overflow-y:auto;
+  height: calc(100vh - 60px); 
+}
+
+.menu-root{list-style:none;margin:0;padding:0;}
+.menu-group-title{
+  padding:10px 16px;color:#9fb8ff;cursor:pointer;
+  user-select:none;font-weight:bold;font-size:15px;
+  transition:background 0.15s;
+  position: relative;
+}
+.menu-group-title:hover{background:#1a2233;}
+/* 選單箭頭 (優化) */
+.menu-group-title::after {
+  content: '›';
+  position: absolute;
+  right: 20px;
+  font-size: 1.2em;
+  transition: transform 0.3s ease-out;
+}
+.menu-group-title.active::after {
+  transform: rotate(90deg);
+}
+
+.menu-item{
+  padding: 5px 20px;
+  color:#dadada;cursor:pointer;
+  user-select:none;font-size:14px;
+  transition:background 0.15s;
+}
+.submenu {
+    list-style: none;
+    margin: 0;
+    padding-left: 24px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+.submenu.active {
+    max-height: 100vh;
+    transition: max-height 0.4s ease-in;
+}
+.submenu li{
+  padding:8px 10px;border-radius:6px;margin:2px 8px;
+  cursor:pointer;transition:background 0.15s;
+}
+.submenu li:hover{background:#1a2233;}
+.submenu li.active{background:#3958ff;}
+.sidebar ul{list-style:none;padding:0;margin:0;}
+/* .sidebar li... (這些規則被 .submenu li 覆蓋了，可以保留或刪除) */
+
+/* ===== 滾動條 (共用) ===== */
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(110, 109, 109) #1d2433;
+}
+/* Other */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-button {
+  background: transparent;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-track-piece {
+  background: #1d2433;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgb(110, 109, 109);
+}
+::-webkit-scrollbar-track {
+  box-shadow: none;
+}
+::-webkit-scrollbar-corner {
+  box-shadow: none;
+  background-color: transparent;
+}
+
+/* ===== 內容（右側） ===== */
+.content{
+  flex:1;padding:18px;overflow-y:auto;
+  padding-top: 80px;
+}
+
+/* * -------------------------------------
+ * ★ CSS Nesting (模組化樣式) 開始
+ * -------------------------------------
+ */
+
+/* 1. 通用卡片樣式 (所有模組共用) */
+.card{background:var(--card);padding:18px;border-radius:12px;max-width:1100px;margin-bottom:18px; box-sizing: border-box;}
+.card h2{margin:0 0 12px 0;color:#bfe1ff;}
+.card label{display:block;margin:8px 0;font-size:14px;color:var(--muted);}
+.card input, .card select, .card button{padding:6px 8px;border-radius:6px;border:none;background:#0f2133;color:var(--text); cursor:pointer;}
+.card input[type="number"]{width:110px;}
+.card input[type="text"]{min-width:180px;}
+.card .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:8px;}
+.card .hint{color:#8fb0ff;font-size:13px;margin-top:6px;}
+.card .err{color:#ff9b9b;margin-top:8px;font-weight:700;}
+
+/* 2. Risk 模組 (#riskModule) */
+#riskModule .adv{margin-top:10px;padding:12px;background:#071826;border-radius:8px;display:none;}
+#riskModule canvas{background:#04111a;border-radius:6px;border:1px solid rgba(255,255,255,0.03);}
+#riskModule #resultArea {
+    width:100%;height:220px;margin-top:12px;padding:12px;border-radius:8px;
+    background:#071029;color:var(--text);font-family:monospace; resize: vertical; box-sizing: border-box;
+}
+
+/* 3. 旋轉工具 模組 (#flipModule) */
+#flipModule #flipInput, 
+#flipModule #flipResult {
+    width:100%;height:220px;margin-top:12px;padding:12px;border-radius:8px;
+    background:#071029;color:var(--text);font-family:monospace; resize: vertical; box-sizing: border-box;
+}
+
+/* 4. 合併工具 模組 (#linkModule) */
+#linkModule .controls{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
+#linkModule .input-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;}
+#linkModule .input-row textarea{flex:1;} /* 讓 textarea 填滿 */
+
+/* 合併工具的「輸入框」 */
+#linkModule textarea.input {
+    width: 100%;
+    min-height: 100px;
+    height: 100px; /* ★ 修正：給定明確高度 */
+    margin-top: 0; /* ★ 修正：移除全域 textarea 帶來的 margin */
+    background: #071029;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    color: #e6eef8;
+    padding: 10px;
+    border-radius: 6px;
+    font-family: monospace;
+    resize: vertical;
+    box-sizing: border-box;
+}
+/* 合併工具的「輸出框」 (你目前是用 div) */
+#linkModule .output {
+    margin-top: 12px;
+    background: #071826;
+    padding: 12px;
+    border-radius: 8px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    white-space: pre-wrap; 
+    font-family: monospace;
+    max-height: 400px;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 150px; /* 給個最小高度 */
+}
+
+/* 5. 採音還原 模組 (#restoreModule) */
+#chartRestoreModule #restoreInput,
+#chartRestoreModule #restoreOutput {
+    width:100%;height:220px;margin-top:12px;padding:12px;border-radius:8px;
+    background:#071029;color:var(--text);font-family:monospace; resize: vertical; box-sizing: border-box;
+}
+
+#chartRestoreModule #restoreOutput {
+    background: #071826; /* 讓輸出框顏色深一點 */
+}

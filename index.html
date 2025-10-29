@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/x-icon" href="images/about/favicon.ico">
+<title>Estella 小工具</title>
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+<!-- ===== 上方標題 Bar ===== -->
+<header style="width: 100%; height: 60px; position: fixed; top: 0; background: var(--card); z-index: 1000; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.1); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+  <div style="display: flex; align-items: center;">
+    <img src="images/about/estella-logo.png" alt="estella-logo" style="-webkit-filter: drop-shadow(0 0 1px #f1e896); filter: drop-shadow(0 0 1px #f1e896); height: 20px;">
+    <h1 style="margin: 5px; font-size: 20px; color: #eeeeee; font-weight: bold;">製譜協作工具</h1>
+  </div>
+</header>
+
+
+<!-- ===== 左側選單 ===== -->
+<aside class="sidebar">
+  <ul class="menu-root">
+
+    <li class="menu-group">
+      <div class="menu-group-title active" data-accordion="homePage">👎 首頁</div>
+      <ul class="submenu active" id="homePage">
+        <li class="menu-item active" data-target="about">- 關於工具</li>
+      </ul>
+    </li>
+
+    <li class="menu-group">
+      <div class="menu-group-title" data-accordion="chartingTools">🔧 譜面工具</div>
+      <ul class="submenu" id="chartingTools">
+        <li class="menu-item" data-target="riskModule">- Risk軌道隨機生成器</li>
+        <li class="menu-item" data-target="flipModule">- 譜面旋轉工具</li>
+        <li class="menu-item" data-target="linkModule">- 譜面合併工具</li>
+        <li class="menu-item" data-target="chartRestoreModule">- 採音還原工具</li>
+        <li class="menu-item" data-target="">- 測試用</li>
+      </ul>
+    </li>
+
+    <li class="menu-group">
+      <div class="menu-group-title" data-accordion="systemTools">⚙️ 系統設定</div>
+      <ul class="submenu" id="systemTools">
+        <li class="menu-item" data-target="settingModule">- 偏好設定</li>
+      </ul>
+    </li>
+
+    
+  </ul>
+</aside>
+
+<!-- ===== 右側內容區 ===== -->
+<main class="content">
+  <!-- 首頁 -->
+  <div id="about" class="module">
+    <div class="card">
+      <h2>🎵 歡迎使用 Estella 製譜協作工具</h2>
+      <p style="color: var(--muted); font-size: 16px;">
+        這是一套專為音樂遊戲譜面設計師開發的輔助工具集，旨在簡化繁瑣的製譜流程並提升效率。
+      </p>
+      <p>
+        請由左側的「譜面工具」選單 選擇您需要的功能。
+      </p>
+      
+      <h3 style="margin-top: 25px; margin-bottom: 10px; color: #bfe1ff;">目前已包含的模組：</h3>
+      <ul style="list-style-type: disc; padding-left: 30px; color: #dadada;">
+        <li style="margin-bottom: 8px;"><strong>Risk軌道隨機生成器</strong>：快速生成隨機、符合密度曲線的 Risk 軌道。</li>
+        <li style="margin-bottom: 8px;"><strong>譜面旋轉工具</strong>：對段落譜面進行角度旋轉。</li>
+        <li style="margin-bottom: 8px;"><strong>合併拆解工具</strong>：合併多個譜面欄位。</li>
+        <li style="margin-bottom: 8px;"><strong>採音還原工具</strong>：保留全域特效的情況下，將譜面回復至單軌並移除Risk音符，方便採音</li>
+      </ul>
+  
+      <p style="margin-top: 25px; color: var(--muted); font-size: 14px;">
+        本工具仍在持續開發中，更多功能將陸續加入 (例如「測試用」 選單下的內容)。
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== Estella Risk 模組 ===== -->
+  <div id="riskModule" class="module" style="display:none;">
+    <div class="card">
+      <h2>Risk 生成器</h2>
+      <div class="row">
+        <label>BPM 每行切分數：<input id="bpmSplit" type="number" min="1" placeholder="例：16"></label>
+        <label>Risk 總數：<input id="riskCount" type="number" min="0" placeholder="例：8"></label>
+        <label>規避軌道：<input id="avoidTracks" type="text" placeholder="可多選，例：5,8"></label>
+      </div>
+      <div class="row">
+        <label><input id="holdCheckbox" type="checkbox"> 長音</label>
+        <label>長音後綴：<input id="holdText" type="text" placeholder="例：[1:4]"></label>
+        <div style="flex:1"></div>
+        <button id="toggleAdv">開啟進階模式</button>
+      </div>
+      <div id="advArea" class="adv">
+        <div class="row">
+          <label>總切分範圍：<input id="advDuration" type="number" min="1" placeholder="例：64"></label>
+          <label>Easing 類型：
+            <select id="easingType">
+              <option value="linear">linear</option>
+              <option value="easeIn">easeIn</option>
+              <option value="easeOut">easeOut</option>
+              <option value="easeInOut">easeInOut</option>
+            </select>
+          </label>
+          <label>緩動強度：<input id="easingPower" type="number" step="0.1" min="0.1" max="4" value="2" style="width:90px;"></label>
+        </div>
+        <div class="row" style="margin-top:8px;">
+          <label>包組模式：
+            <select id="packMode">
+              <option value="none">無</option>
+              <option value="risk">依 Risk 數量分組</option>
+              <option value="comma">依切分（逗號）分組</option>
+            </select>
+          </label>
+          <label>每組大小：<input id="packSize" type="number" min="1" placeholder="例：3" style="width:80px;"></label>
+          <label>起始組值：<input id="packStart" type="number" min="0" value="1" style="width:80px;"></label>
+        </div>
+        <div class="hint">曲線代表每格「密度」(0=空、1=必生)。系統使用「Y 軸均分 → 尋找最接近的 slot」映射 (y = (k-0.5)/N)，結果穩定且能反映曲線疏密。</div>
+        <div style="margin-top:10px;"><canvas id="curveCanvas" width="880" height="120"></canvas></div>
+      </div>
+      <div style="margin-top:12px;">
+        <button id="generateBtn">生成</button>
+        <button id="copyBtn">📋 複製結果</button>
+      </div>
+      <textarea id="resultArea" readonly placeholder="生成結果會顯示在這裡..."></textarea>
+    </div>
+  </div>
+
+  <!-- ===== 譜面翻轉工具模組 ===== -->
+  <div id="flipModule" class="module" style="display:none;">
+    <div class="card">
+      <h2>譜面旋轉工具</h2>
+      <div class="row">
+        <label>旋轉角度（正 = 順時針, 負 = 逆時針）：<input id="flipAngle" type="number" step="1" value="45" style="width:80px;"></label>
+        <label>模式：
+          <select id="flipMode">
+            <option value="8">8格旋轉（1軌 = 45°）</option>
+            <option value="16">16格旋轉（僅旋轉cs類型）</option>
+          </select>
+        </label>
+      </div>
+      <div class="row">
+        <label>輸入譜面：</label>
+      </div>
+      <textarea id="flipInput" placeholder="請貼入譜面，例如：c1,,,c4[2:1],,,7,,2,r3"></textarea>
+      <div class="row">
+        <button id="flipBtn">翻轉</button>
+        <button id="flipCopy">📋 複製結果</button>
+      </div>
+      <textarea id="flipResult" readonly placeholder="翻轉後結果會顯示在這裡..."></textarea>
+    </div>
+  </div>
+
+  <!-- ===== 譜面合併拆解工具 ===== -->
+  <div id="linkModule" class="module" style="display:none;">
+    <div class="card">
+      <h2>譜面合併拆解工具</h2>
+      <div style="margin-top:-8px; margin-bottom:10px; font-size: 12px; color: #717479;">
+        規則：<br>
+        1. 必須以 {N} 開頭，{N} 會繼承至下一個 {N}。<br>
+        2. 換行時機取決於「比例」，比例由「逗號數量 / N」決定。<br>
+        3. 合併時，所有欄位的「同一行」必須具有相同比例 (例如 A,B 欄的第一行都是 1/2)。
+      </div>
+      <div class="controls">
+        <button id="addMergeInputBtn">＋ 新增欄位</button>
+        <button id="mergeBtnLink">🔁 合併</button>
+        <div style="flex:1"></div>
+      </div>
+      <div id="inputsLink"></div>
+      <div id="errLink" class="err" style="display:none"></div>
+      <div class="output" id="outputLink">{合併結果會顯示在此}</div>
+      <button id="copyMergeResultBtn" style="margin-top: 12px;">📋 複製結果</button>
+      <div class="hint" style="margin-top:10px;">
+        範例：<br>
+        A欄: <code>{4}<br>2,3,</code><br>
+        B欄: <code>{6}<br>1as,l5,,</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 採音還原模組 ====== -->
+  <div id="chartRestoreModule" class="module" style="display:none;">
+    <div class="card">
+      <h2>採音還原工具</h2>
+      <p class="hint">
+        移除所有 Risk (r) 物件，並將所有物件轉換為指定軌道的物件，並保留其後綴。
+      </p>
+      <div class="row">
+        <label for="restoreInput">輸入譜面：</label>
+      </div>
+      <textarea id="restoreInput" placeholder="請貼入要還原的譜面..."></textarea>
+      
+      <div class="row" style="margin-top: 12px;">
+        <label for="restoreTrackInput">替換為軌道：</label>
+        <input type="text" id="restoreTrackInput" value="1" style="width: 80px; min-width: 50px; text-align: center;">
+      </div>
+
+      <div class="row" style="margin-top: 12px;">
+        <button id="restoreBtn">執行還原</button>
+        <button id="restoreCopyBtn">📋 複製結果</button>
+      </div>
+      
+      <textarea id="restoreOutput" readonly placeholder="還原後的譜面..."></textarea>
+    </div>
+  </div>
+
+  <!-- ===== 測試用 ====== -->
+  <div id="test" class="module" style="display:none;">
+    
+  </div>
+</main>
+
+<script src="js/riskGenerator.js"></script>
+<script src="js/chartFlipper.js"></script>
+<script src="js/chartLinker.js"></script>
+<script src="js/chartRestorer.js"></script>
+
+<script src="js/main.js"></script>
+
+</body>
+</html>
