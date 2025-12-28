@@ -7,6 +7,7 @@ if (restoreBtn) {
     const restoreInput = document.getElementById('restoreInput');
     const restoreOutput = document.getElementById('restoreOutput');
     const restoreCopyBtn = document.getElementById('restoreCopyBtn');
+    const removeSpeedCheckbox = document.getElementById('removeSpeedCheckbox');
     
     // ★ 新增：獲取軌道輸入框
     const restoreTrackInput = document.getElementById('restoreTrackInput');
@@ -15,16 +16,21 @@ if (restoreBtn) {
      * 核心處理函式：處理單一個 Note Token
      * ★ 變更：現在接收 targetTrack 參數
      */
-    function processNoteToken(token, targetTrack) {
+    function processNoteToken(token, targetTrack, removeSpeed) {
         if (!token) return null;
 
         const trimmedToken = token.trim();
         if (trimmedToken === '') return ''; // 保留空格/空 cell
 
+        if (removeSpeed) {
+            // 匹配 (s1), (gs1), (ge1), (s100?4) 等格式
+            if (trimmedToken.match(/^\((gs?|ge|s)\d+(\?\d+)?\)$/)) {
+                return null; 
+            }
+        }
+
         // --- 規則 2 & 3: 移除 ---
         if (trimmedToken.startsWith('r')) return null; // r prefix
-        if (trimmedToken.match(/^\(g[se]\d+\)$/)) return null; // gs, ge
-        if (trimmedToken.match(/^\(s\d+\?\d+\)$/)) return null; // s?
 
         // --- 規則 1, 4, 5, 6: 轉換 ---
         const match = trimmedToken.match(/^(c|l|cl)?(\d+as|\d+bs|\d+cs|\d+s|0s|\d+)(\[.*\])?$/);
@@ -45,12 +51,12 @@ if (restoreBtn) {
      * 處理一個「儲存格」 (可能包含 /)
      * ★ 變更：現在接收 targetTrack 參數
      */
-    function processCell(cell, targetTrack) {
+    function processCell(cell, targetTrack, removeSpeed) {
         if (cell === undefined || cell === null) return '';
         
         const tokens = cell.split('/');
         const processedTokens = tokens
-            .map(token => processNoteToken(token, targetTrack)) // ★ 變更：傳遞 targetTrack
+            .map(token => processNoteToken(token, targetTrack, removeSpeed)) // ★ 變更：傳遞 targetTrack
             .filter(t => t !== null);
             
         return processedTokens.join('/');
@@ -71,8 +77,15 @@ if (restoreBtn) {
             targetTrack = '1';
         }
 
+        const removeSpeed = removeSpeedCheckbox.checked;
+
         for (const line of lines) {
             
+            if (line.trim().startsWith('//')) {
+                outputLines.push(line); 
+                continue;
+            }
+
             const parts = line.split(/(\{\d+\})/g);
             let accumulatedCells = []; // 用於暫存 {N} 標記之間的譜面
 
@@ -84,7 +97,7 @@ if (restoreBtn) {
                 if (trimmedPart.match(/^\{(\d+)\}$/)) {
                     if (accumulatedCells.length > 0) {
                         // ★ 變更：傳遞 targetTrack
-                        outputLines.push(accumulatedCells.map(cell => processCell(cell, targetTrack)).join(','));
+                        outputLines.push(accumulatedCells.map(cell => processCell(cell, targetTrack, removeSpeed)).join(','));
                     }
                     accumulatedCells = []; 
                     outputLines.push(trimmedPart);
@@ -99,7 +112,7 @@ if (restoreBtn) {
             // 處理最後剩餘的譜面
             if (accumulatedCells.length > 0) {
                  // ★ 變更：傳遞 targetTrack
-                 outputLines.push(accumulatedCells.map(cell => processCell(cell, targetTrack)).join(','));
+                 outputLines.push(accumulatedCells.map(cell => processCell(cell, targetTrack, removeSpeed)).join(','));
             }
         }
         

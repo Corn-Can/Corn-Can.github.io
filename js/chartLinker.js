@@ -71,10 +71,11 @@ function runLcmMerge(texts) {
    const result=[];
    let currentN=null; // 【重點1】{N} 繼承
    for(let line of lines){
-    const match=line.match(/^\{(\d+)\}$/);
-    if(match){
-     currentN=parseInt(match[1]);
-     continue;
+    const match = line.match(/^\{(\d+)\}/); // 移除結尾符 $, 允許後方有內容
+    if (match) {
+        currentN = parseInt(match[1]);
+        line = line.replace(/^\{(\d+)\}/, ""); // 移除 {N} 部分，讓後續處理剩下的譜面
+        if (line.trim() === "") continue; // 若整行只有 {N} 則跳過
     }
     if(currentN==null){throw new Error(`(LCM模式) 第 ${idx+1} 欄的內容缺少 {N} 定義`);}
     
