@@ -127,8 +127,8 @@ body{font-family:"Microsoft JhengHei",system-ui,Segoe UI,Arial;background:var(--
 #linkModule .input-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;}
 #linkModule .input-row textarea{flex:1;} /* 讓 textarea 填滿 */
 
-/* 合併工具的「輸入框」 */
-#linkModule textarea.input {
+/* 文字輸入框 */
+textarea.input {
     width: 100%;
     min-height: 100px;
     height: 100px; /* ★ 修正：給定明確高度 */
@@ -142,8 +142,8 @@ body{font-family:"Microsoft JhengHei",system-ui,Segoe UI,Arial;background:var(--
     resize: vertical;
     box-sizing: border-box;
 }
-/* 合併工具的「輸出框」 (你目前是用 div) */
-#linkModule .output {
+/* 文字輸出框 */
+.output {
     margin-top: 12px;
     background: #071826;
     padding: 12px;
@@ -156,6 +156,8 @@ body{font-family:"Microsoft JhengHei",system-ui,Segoe UI,Arial;background:var(--
     width: 100%;
     box-sizing: border-box;
     min-height: 150px; /* 給個最小高度 */
+    color: var(--text); 
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* 5. 採音還原 模組 (#restoreModule) */
