@@ -51,7 +51,14 @@ document.getElementById('mergeBtnLink').onclick=()=>{
     runDirectMerge(texts);
   } else {
     // --- 模式 3：混用錯誤 ---
-    throw new Error("模式混用：請確保所有欄位都以 {N} 開頭，或所有欄位都不以 {N} 開頭。");
+    const firstCommaCount = rowSet[0].consumedSlots;
+    const isConsistent = rowSet.every(r => r.consumedSlots === firstCommaCount);
+
+    if (!isConsistent) {
+        // 聰明提示：收集並列出每一個欄位的逗號數量
+        const details = rowSet.map((r, index) => `欄位 ${index + 1}: ${r.consumedSlots} 個逗號`).join('\n  ');
+        throw new Error(`(直接合併模式) 第 ${i + 1} 行的逗號數量不一致！\n\n🔍 偵測到的狀況：\n  ${details}\n\n請補齊或刪減多餘的逗號。`);
+    }
   }
   
  } catch (e) {
@@ -111,7 +118,9 @@ function runLcmMerge(texts) {
    // 【重點3】檢查所有欄位的「比例」是否一致
    const firstProp = rowSet[0].proportion;
    if (!rowSet.every(r => Math.abs(r.proportion - firstProp) < 1e-9)) {
-    throw new Error(`(LCM模式) 第 ${i + 1} 行的各欄位比例不一致 (例如 1/2 和 1/3)。請檢查各欄的「逗號數量」。`);
+       // 聰明提示：收集並列出每一個欄位的「逗號數/N值」
+       const details = rowSet.map((r, index) => `欄位 ${index + 1}: ${r.consumedSlots}個逗號 / {${r.N}} = 比例 ${+(r.proportion).toFixed(3)}`).join('\n  ');
+       throw new Error(`(LCM模式) 第 ${i + 1} 行的各欄位比例不一致！\n\n🔍 偵測到的狀況：\n  ${details}\n\n請確保同一行的 (逗號數量 ÷ N) 算出來的值是相等的。`);
    }
    
    if (firstProp < 1e-9 && rowSet.every(r => r.consumedSlots === 0)) {
