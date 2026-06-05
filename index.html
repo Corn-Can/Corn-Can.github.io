@@ -36,7 +36,9 @@
         <li class="menu-item" data-target="flipModule">- 譜面旋轉工具</li>
         <li class="menu-item" data-target="linkModule">- 譜面合併工具</li>
         <li class="menu-item" data-target="chartRestoreModule">- 採音還原工具</li>
-        <li class="menu-item" data-target="">- 測試用</li>
+        <li class="menu-item" data-target="animationMirrorModule">- 動畫鏡像工具</li>
+        <li class="menu-item" data-target="easingJitterModule">- 緩動與抖動生成</li>
+        <li class="menu-item" data-target="groupInitModule">- 群組初始化工具</li>
       </ul>
     </li>
 
@@ -209,8 +211,120 @@
     </div>
   </div>
 
-  <!-- ===== 測試用 ====== -->
-  <div id="test" class="module" style="display:none;">
+  <!-- ===== 譜面翻轉工具模組 ===== -->
+   <div id="animationMirrorModule" class="module" style="display:none;">
+    <div class="card">
+      <h2>動畫鏡像工具</h2>
+      <div>
+        <label>鏡像選擇：</label>
+        <div class="row">
+          <label>
+            <input id="mirrorR" type="checkbox" checked="true"> 鏡像旋轉動畫
+          </label>
+          <label>
+            <input id="mirrorD" type="checkbox"> 鏡像鏡距動畫
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <label>輸入譜面：</label>
+      </div>
+      <textarea id="animationMirrorInput" placeholder="請貼入譜面，例如：c1,,,c4[2:1],,,7,,2,r3" class="input"></textarea>
+      <div class="row">
+        <button id="animationMirrorBtn">翻轉</button>
+        <button id="animationMirrorCopy">📋 複製結果</button>
+      </div>
+      <textarea id="animationMirrorResult" readonly placeholder="翻轉後結果會顯示在這裡..." class="output"></textarea>
+    </div>
+  </div>
+
+  <!-- ===== 緩動工具模組 ===== -->
+
+  <div id="easingJitterModule" class="module" style="display:none;">
+  <div class="card">
+    <h2>特效緩動與抖動生成器</h2>
+    <p class="hint">自動生成 (s), (r~), (d~) 的漸變陣列，支援自訂緩動曲線與跳針抽搐特效。</p>
+    
+    <div class="row">
+      <label>特效類型：
+        <select id="ejType">
+          <option value="s">流速 (s)</option>
+          <option value="r">相對旋轉 (r~)</option>
+          <option value="d">相對鏡距 (d~)</option>
+        </select>
+      </label>
+      <label>速度組 ID (可選)：<input id="ejGroupID" type="number" placeholder="例: 99" style="width:80px;"></label>
+      
+      <label>BPM 每行切分數：<input id="ejBpmSplit" type="number" min="1" value="16" style="width:70px;"></label>
+      <label>總產出格子數：<input id="ejSteps" type="number" min="2" value="32" style="width:70px;"></label>
+    </div>
+
+    <div class="row" style="background:#071826; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
+      <label>起始數值：<input id="ejStart" type="number" value="1" style="width:80px;"></label>
+      <label>結束數值：<input id="ejEnd" type="number" value="-1" style="width:80px;"></label>
+      <label>緩動曲線：
+        <select id="ejCurve">
+          <option value="linear">Linear (等速)</option>
+          <option value="easeOut">Ease Out (先快後慢)</option>
+          <option value="easeIn">Ease In (先慢後快)</option>
+          <option value="easeInOut">Ease In Out (平滑)</option>
+        </select>
+      </label>
+      <label>曲線強度：<input id="ejPower" type="number" step="0.1" min="0.1" max="5" value="2" style="width:60px;"></label>
+    </div>
+
+    <div class="row" style="margin-top:12px; background:#1a0f14; padding:10px; border-radius:8px; border:1px solid rgba(255,100,100,0.2);">
+      <label style="color:#ff9b9b; font-weight:bold;">故障特效：</label>
+      <label>模式：
+        <select id="ejJitterMode">
+          <option value="none">無 (平滑漸變)</option>
+          <option value="spike">抽搐 (高頻交替: 起始↔結束)</option>
+          <option value="stutter">跳針 (瞬間歸零/停滯)</option>
+          <option value="noise">噪聲 (持續細微亂跳)</option>
+        </select>
+      </label>
+      <label>觸發機率(%)：<input id="ejJitterProb" type="number" value="25" min="1" max="100" style="width:60px;"></label>
+      <label>噪聲突波幅度：<input id="ejJitterAmt" type="number" value="2" style="width:70px;"></label>
+    </div>
+
+    <div class="hint" style="margin-top:12px;">曲線預覽 (紅點代表實際生成的數值，垂直線為每行切分點)</div>
+    <div style="margin-top:5px;">
+      <canvas id="ejCurveCanvas" width="880" height="120" style="background:#04111a;border-radius:6px;border:1px solid rgba(255,255,255,0.03); max-width:100%;"></canvas>
+    </div>
+
+    <div class="row" style="margin-top:12px;">
+      <button id="ejGenerateBtn" style="background:#e63946; font-weight:bold;">生成特效陣列</button>
+      <button id="ejCopyBtn">📋 複製結果</button>
+    </div>
+    
+    <textarea id="ejOutput" class="output" readonly placeholder="生成的結果將顯示在此..."></textarea>
+  </div>
+  </div>
+
+
+  <!-- ===== 批量群組初始化工具 ====== -->
+  <div id="groupInitModule" class="module" style="display:none;">
+  <div class="card">
+    <h2>批量群組初始化工具 (Group Auto-Initializer)</h2>
+    <p class="hint">快速生成大量群組的初始狀態代碼，省去手動輸入 (s1?10)/(s1?11)... 的繁瑣工作。</p>
+    
+    <div class="row">
+      <label>起始群組 ID：<input id="giStart" type="number" value="1" style="width:80px;"></label>
+      <label>結束群組 ID：<input id="giEnd" type="number" value="10" style="width:80px;"></label>
+    </div>
+
+    <div class="row" style="background:#071826; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
+      <label>初始化指令：<input id="giCmds" type="text" value="s1" placeholder="例: s1" style="width:250px;"></label>
+    </div>
+
+    <div class="row" style="margin-top:12px;">
+      <button id="giGenerateBtn" style="background:#f59e0b; font-weight:bold;">生成初始化代碼</button>
+      <button id="giCopyBtn">📋 複製結果</button>
+    </div>
+    
+    <textarea id="giOutput" class="output" readonly style="height:150px;" placeholder="生成的 (s1?10)/(s1?11)... 代碼將顯示在此..."></textarea>
+  </div>
+</div>
     
   </div>
 </main>
@@ -219,6 +333,9 @@
 <script src="js/chartFlipper.js"></script>
 <script src="js/chartLinker.js"></script>
 <script src="js/chartRestorer.js"></script>
+<script src="js/animationMirrorer.js"></script>
+<script src="js/easingGenerator.js"></script>
+<script src="js/groupInit.js"></script>
 
 <script src="js/main.js"></script>
 
